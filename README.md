@@ -14,11 +14,8 @@ An app I originally made for my father to help him quit smoking. Helps you see h
 
 ## Screens
 
-<img width="30%" src="screens/2.jpg"/>
-<img width="30%" src="screens/3.jpg"/>
-<img width="30%" src="screens/5.jpg"/>
-<img width="30%" src="screens/4.jpg"/>
-<img width="30%" src="screens/1.jpg"/>
+<img  src="screens/1.png"/>
+<img src="screens/2.png"/>
 
 # Available On
 
