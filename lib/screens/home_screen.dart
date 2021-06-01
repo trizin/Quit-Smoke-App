@@ -269,7 +269,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 buildCategoryCard(sc, context,
                     color: Colors.deepPurple,
                     icon: Icons.bolt,
-                    text: "${langs[lang]["home"]["reason"]}asd",
+                    text: "${langs[lang]["home"]["reason"]}",
                     id: "reasons", onTap: () {
                   Navigator.push(context, MaterialPageRoute(builder: (_) {
                     return ReasonScreen();
