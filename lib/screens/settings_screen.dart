@@ -69,7 +69,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             TextFormField(
               controller: controllerday,
               onChanged: (value) => dailyCigarattes = int.parse(value),
-              keyboardType: TextInputType.number,
+              keyboardType: TextInputType.numberWithOptions(decimal: true),
               decoration: new InputDecoration(
                 labelText: langs[lang]["welcome"]["howmanyperday"],
                 fillColor: Colors.white,
@@ -87,7 +87,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             TextFormField(
               controller: controllercost,
               onChanged: (value) => pricePerCigaratte = double.parse(value),
-              keyboardType: TextInputType.number,
+              keyboardType: TextInputType.numberWithOptions(decimal: true),
               decoration: new InputDecoration(
                 labelText: langs[lang]["welcome"]["howmuchpercigcost"],
                 fillColor: Colors.white,

@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:avatar_glow/avatar_glow.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:quitsmoke/comps/getlang.dart';
 import 'package:quitsmoke/size_config.dart';
@@ -144,7 +145,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
               TextFormField(
                 controller: myController2,
                 onChanged: (value) => dailycigarattes = int.parse(value),
-                keyboardType: TextInputType.number,
+                keyboardType: TextInputType.numberWithOptions(decimal: true),
                 decoration: new InputDecoration(
                   labelText: langs[lang]["welcome"]["howmanyperday"],
                   fillColor: Colors.white,
@@ -162,7 +163,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
               TextFormField(
                 controller: myController3,
                 onChanged: (value) => pricePerCigaratte = double.parse(value),
-                keyboardType: TextInputType.number,
+                keyboardType: TextInputType.numberWithOptions(decimal: true),
                 decoration: new InputDecoration(
                   labelText: langs[lang]["welcome"]["howmuchpercigcost"],
                   fillColor: Colors.white,

@@ -142,7 +142,8 @@ class _WalletScreenState extends State<WalletScreen> {
                     TextField(
                       onChanged: (value) =>
                           _amountofmoney = double.parse(value),
-                      keyboardType: TextInputType.number,
+                      keyboardType:
+                          TextInputType.numberWithOptions(decimal: true),
                       decoration: InputDecoration(
                           border: InputBorder.none,
                           hintText: "${langs[lang]["wallet"]["amount"]}"),

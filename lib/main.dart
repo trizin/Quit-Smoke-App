@@ -39,19 +39,30 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      builder: (context, child) {
-        return MediaQuery(
-          data: MediaQuery.of(context).copyWith(textScaleFactor: 1),
-          child: child,
-        );
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: () {
+        FocusScopeNode currentFocus = FocusScope.of(context);
+
+        if (!currentFocus.hasPrimaryFocus &&
+            currentFocus.focusedChild != null) {
+          FocusManager.instance.primaryFocus.unfocus();
+        }
       },
-      debugShowCheckedModeBanner: false,
-      title: 'Quit Smoking',
-      theme: themeData(context),
-      home: SplashScreen(),
-      darkTheme: darkThemeData(context),
-      themeMode: ThemeMode.light,
+      child: MaterialApp(
+        builder: (context, child) {
+          return MediaQuery(
+            data: MediaQuery.of(context).copyWith(textScaleFactor: 1),
+            child: child,
+          );
+        },
+        debugShowCheckedModeBanner: false,
+        title: 'Quit Smoking',
+        theme: themeData(context),
+        home: SplashScreen(),
+        darkTheme: darkThemeData(context),
+        themeMode: ThemeMode.light,
+      ),
     );
   }
 }

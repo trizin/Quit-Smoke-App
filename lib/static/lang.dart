@@ -431,7 +431,7 @@ Huzursuzluk
       "guide": "Rehber",
       "rewards": "Ödüller",
       "minafter": "dakika sonra",
-      "daysafter": "gün sonra",
+      "daysafter": "X gün sonra",
       "timePassed": "Geçen Zaman",
       "moneyEarned": "Kazanılan Toplam Para",
       "cigarratesnotsmoked": "İçilmeyen Sigara",
