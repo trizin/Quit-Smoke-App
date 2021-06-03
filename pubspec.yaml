@@ -37,6 +37,7 @@ dependencies:
   flutter_local_notifications: ^6.0.0
   timezone: ^0.7.0
   flutter_native_timezone: ^1.1.0
+  image: ^3.0.2
 
 dev_dependencies:
   flutter_test:

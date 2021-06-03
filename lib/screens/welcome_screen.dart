@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:quitsmoke/comps/getlang.dart';
+import 'package:quitsmoke/comps/snappable.dart';
 import 'package:quitsmoke/size_config.dart';
 import 'package:quitsmoke/static/currencies.dart';
 import 'package:quitsmoke/static/lang.dart';
@@ -31,6 +32,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   int dailycigarattes;
   int index = 0;
   String currency;
+  final snapKey = GlobalKey<SnappableState>();
 
   @override
   void initState() {
@@ -39,21 +41,29 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     lang = getLang();
   }
 
+  bool starting = false;
   _startNow() async {
     if (pricePerCigaratte == null ||
         dailycigarattes == null ||
         reason == null ||
         reason.length == 0 ||
         currency == null) return false;
-    SharedPreferences pref = await SharedPreferences.getInstance();
-    pref.setString("startTime", stopDate.toIso8601String());
-    pref.setDouble("pricePerCigaratte", pricePerCigaratte);
-    pref.setInt("dailycigarattes", dailycigarattes);
-    pref.setString("currency", currency);
-    pref.setString("reason", jsonEncode(reason));
+    setState(() {
+      starting = true;
+    });
+    snapKey.currentState.snap();
 
-    Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (BuildContext context) => HomeScreen()));
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    Future.delayed(Duration(seconds: 5), () {
+      pref.setString("startTime", stopDate.toIso8601String());
+      pref.setDouble("pricePerCigaratte", pricePerCigaratte);
+      pref.setInt("dailycigarattes", dailycigarattes);
+      pref.setString("currency", currency);
+      pref.setString("reason", jsonEncode(reason));
+
+      Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (BuildContext context) => HomeScreen()));
+    });
   }
 
   Widget router(BuildContext context, int i) {
@@ -98,7 +108,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                         myController.clear();
                         setState(() {});
                       },
-                      child: Text("\u{2795} Add to list"))
+                      child: Text(
+                          "\u{2795} ${langs[lang]["welcome"]["addtolist"]}"))
                 ],
               ),
               Expanded(
@@ -162,7 +173,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
               ),
               TextFormField(
                 controller: myController3,
-                onChanged: (value) => pricePerCigaratte = double.parse(value),
+                onChanged: (value) => pricePerCigaratte =
+                    double.parse(value.replaceAll(",", ".")),
                 keyboardType: TextInputType.numberWithOptions(decimal: true),
                 decoration: new InputDecoration(
                   labelText: langs[lang]["welcome"]["howmuchpercigcost"],
@@ -234,18 +246,29 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
         );
       case 2:
         return Center(
-          child: AvatarGlow(
-            glowColor: Colors.blue,
-            endRadius: 180.0,
-            duration: Duration(milliseconds: 2000),
-            repeat: true,
-            showTwoGlows: false,
-            repeatPauseDuration: Duration(milliseconds: 100),
-            child: OutlineButton(
-              child: Text(langs[lang]["welcome"]["start"]),
-              onPressed: () => _startNow(),
-              padding: const EdgeInsets.all(15),
-            ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Snappable(
+                key: snapKey,
+                child: Image.asset("./assets/images/cigarette.png",
+                    width: getProportionateScreenWidth(200),
+                    height: getProportionateScreenWidth(200)),
+              ),
+              if (!starting)
+                AvatarGlow(
+                  glowColor: Colors.blue,
+                  endRadius: 180.0,
+                  duration: Duration(milliseconds: 2000),
+                  repeat: true,
+                  showTwoGlows: false,
+                  repeatPauseDuration: Duration(milliseconds: 100),
+                  child: ElevatedButton(
+                    child: Text(langs[lang]["welcome"]["start"]),
+                    onPressed: () => _startNow(),
+                  ),
+                ),
+            ],
           ),
         );
     }
@@ -312,7 +335,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                 children: [
                   IconButton(
                     onPressed: () {
-                      if (index == 0) return false;
+                      if (index == 0 || starting) return false;
                       setState(() {
                         index -= 1;
                       });
@@ -324,7 +347,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                   ),
                   IconButton(
                     onPressed: () {
-                      if (index == 2) return false;
+                      if (index == 2 || starting) return false;
                       setState(() {
                         if (reason.length != 0 && index == 0 ||
                             (index == 1 &&

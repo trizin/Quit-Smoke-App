@@ -86,7 +86,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
             TextFormField(
               controller: controllercost,
-              onChanged: (value) => pricePerCigaratte = double.parse(value),
+              onChanged: (value) =>
+                  pricePerCigaratte = double.parse(value.replaceAll(",", ".")),
               keyboardType: TextInputType.numberWithOptions(decimal: true),
               decoration: new InputDecoration(
                 labelText: langs[lang]["welcome"]["howmuchpercigcost"],

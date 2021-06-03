@@ -484,7 +484,8 @@ Huzursuzluk
       "howmanyperday": "Günde kaç adet sigara içiyorsun",
       "howmuchpercigcost": "Bir adet sigara sana ne kadara mal oluyor?",
       "choosecurrency": "Para biriminizi seçin",
-      "start": "Şimdi Başla!"
+      "start": "Şimdi Başla!",
+      "addtolist": "Listeye ekle"
     },
     "settings": {
       "save": "Kaydet",
@@ -974,7 +975,8 @@ Restlessness
       "howmanyperday": "How many cigarattes do you smoke in a day",
       "howmuchpercigcost": "How much does one cigarette cost you?",
       "choosecurrency": "Choose your currency",
-      "start": "Start Now!"
+      "start": "Start Now!",
+      "addtolist": "Add to list"
     },
     "settings": {
       "save": "Save",
