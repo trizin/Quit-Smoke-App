@@ -1,5 +1,4 @@
 import 'package:quitsmoke/static/htimes.dart';
-
 class Cigaratte {
   final DateTime startDate;
   final double pricePerCigaratte;
