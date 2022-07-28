@@ -229,11 +229,14 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                   SizedBox(
                     width: 10,
                   ),
-                  Padding(padding: EdgeInsets.symmetric(horizontal: 20), child:
-                    OutlinedButton(
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 20),
+                    child: OutlinedButton(
                       onPressed: () => _pickDate(context),
                       child: Text(langs[lang]["settings"]["change"]),
-                      style: OutlinedButton.styleFrom(side: BorderSide(color: Theme.of(context).primaryColor, width: 2)),
+                      style: OutlinedButton.styleFrom(
+                          side: BorderSide(
+                              color: Theme.of(context).primaryColor, width: 2)),
                     ),
                   ),
                 ],
@@ -299,77 +302,82 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
       appBar: AppBar(),
       body: SizedBox(
         width: double.infinity,
-        child: Column(
-          children: [
-            router(context, index),
-            Expanded(
-              child: Text(""),
-            ),
-            Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    buildpageindicator(0),
-                    SizedBox(
-                      width: 5,
-                    ),
-                    buildpageindicator(1),
-                    SizedBox(
-                      width: 5,
-                    ),
-                    buildpageindicator(2),
-                  ],
-                )
-              ],
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 15),
-              child: Row(
-                children: [
-                  IconButton(
-                    onPressed: () {
-                      if (index == 0 || starting) return false;
-                      setState(() {
-                        index -= 1;
-                      });
-                    },
-                    icon: Icon(
-                      Icons.keyboard_arrow_left,
-                      size: getProportionateScreenWidth(32),
-                    ),
-                  ),
-                  IconButton(
-                    onPressed: () {
-                      if (index == 2 || starting) return false;
-                      setState(() {
-                        if (reason.length != 0 && index == 0 ||
-                            (index == 1 &&
-                                !(pricePerCigaratte == null ||
-                                    dailycigarattes == null ||
-                                    currency == null))) index += 1;
-                      });
-                    },
-                    icon: Icon(
-                      Icons.keyboard_arrow_right,
-                      size: getProportionateScreenWidth(32),
-                    ),
-                  ),
-                ],
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        child: SafeArea(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Container(
+                color: Colors.red,
+                child: router(context, index),
               ),
-            ),
-            SizedBox(
-              height: 30,
-            ),
-          ],
+              Column(
+                children: [
+                  _pageIndicators,
+                  _pageNavigation,
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
+
+  Widget get _pageIndicators => Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              buildpageindicator(0),
+              SizedBox(
+                width: 5,
+              ),
+              buildpageindicator(1),
+              SizedBox(
+                width: 5,
+              ),
+              buildpageindicator(2),
+            ],
+          )
+        ],
+      );
+
+  Widget get _pageNavigation => Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
+        child: Row(
+          children: [
+            IconButton(
+              onPressed: () {
+                if (index == 0 || starting) return false;
+                setState(() {
+                  index -= 1;
+                });
+              },
+              icon: Icon(
+                Icons.keyboard_arrow_left,
+                size: getProportionateScreenWidth(32),
+              ),
+            ),
+            IconButton(
+              onPressed: () {
+                if (index == 2 || starting) return false;
+                setState(() {
+                  if (reason.length != 0 && index == 0 ||
+                      (index == 1 &&
+                          !(pricePerCigaratte == null ||
+                              dailycigarattes == null ||
+                              currency == null))) index += 1;
+                });
+              },
+              icon: Icon(
+                Icons.keyboard_arrow_right,
+                size: getProportionateScreenWidth(32),
+              ),
+            ),
+          ],
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        ),
+      );
 
   AnimatedContainer buildpageindicator(int i) {
     return AnimatedContainer(
