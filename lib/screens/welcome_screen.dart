@@ -347,8 +347,19 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            _makeNavigationButton(_leftArrowIcon, _moveToPrevious),
-            _makeNavigationButton(_rightArrowIcon, _moveToNextPage),
+            _isFirstPage
+                ? SizedBox()
+                : _makeNavigationButton(
+                    icon: _leftArrowIcon,
+                    action: _moveToPrevious,
+                  ),
+            _isLastPage
+                ? SizedBox()
+                : _makeNavigationButton(
+                    icon: _rightArrowIcon,
+                    action: _moveToNextPage,
+                    isEnabled: _canMoveToNextScreen(),
+                  ),
           ],
         ),
       );
@@ -371,6 +382,29 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     });
   }
 
+  bool get _isFirstPage => index == 0;
+  bool get _isLastPage => index == 2;
+
+  bool _canMoveToNextScreen() {
+    if (_isLastPage) return false;
+
+    switch (index) {
+      case 0:
+        return reason.isNotEmpty;
+      case 1:
+        return _hasCompletedConsumptionFields();
+      default:
+        return true;
+    }
+  }
+
+  bool _hasCompletedConsumptionFields() {
+    if (pricePerCigaratte == null) return false;
+    if (dailycigarattes == null) return false;
+    if (currency == null) return false;
+    return true;
+  }
+
   Icon get _rightArrowIcon => Icon(
         Icons.keyboard_arrow_right,
         size: getProportionateScreenWidth(32),
@@ -381,18 +415,14 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
         size: getProportionateScreenWidth(32),
       );
 
-  Widget _makeNavigationButton(Icon icon, VoidCallback action) {
+  Widget _makeNavigationButton({
+    Icon icon,
+    VoidCallback action,
+    bool isEnabled = true,
+  }) {
     return IconButton(
-      onPressed: () {
-        if (index == 2 || starting) return false;
-        setState(() {
-          if (reason.length != 0 && index == 0 ||
-              (index == 1 &&
-                  !(pricePerCigaratte == null ||
-                      dailycigarattes == null ||
-                      currency == null))) index += 1;
-        });
-      },
+      color: Colors.blue,
+      onPressed: isEnabled ? action : null,
       icon: icon,
     );
   }
