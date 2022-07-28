@@ -229,11 +229,14 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                   SizedBox(
                     width: 10,
                   ),
-                  Padding(padding: EdgeInsets.symmetric(horizontal: 20), child:
-                    OutlinedButton(
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 20),
+                    child: OutlinedButton(
                       onPressed: () => _pickDate(context),
                       child: Text(langs[lang]["settings"]["change"]),
-                      style: OutlinedButton.styleFrom(side: BorderSide(color: Theme.of(context).primaryColor, width: 2)),
+                      style: OutlinedButton.styleFrom(
+                          side: BorderSide(
+                              color: Theme.of(context).primaryColor, width: 2)),
                     ),
                   ),
                 ],
@@ -299,75 +302,128 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
       appBar: AppBar(),
       body: SizedBox(
         width: double.infinity,
-        child: Column(
-          children: [
-            router(context, index),
-            Expanded(
-              child: Text(""),
-            ),
-            Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    buildpageindicator(0),
-                    SizedBox(
-                      width: 5,
-                    ),
-                    buildpageindicator(1),
-                    SizedBox(
-                      width: 5,
-                    ),
-                    buildpageindicator(2),
-                  ],
-                )
-              ],
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 15),
-              child: Row(
-                children: [
-                  IconButton(
-                    onPressed: () {
-                      if (index == 0 || starting) return false;
-                      setState(() {
-                        index -= 1;
-                      });
-                    },
-                    icon: Icon(
-                      Icons.keyboard_arrow_left,
-                      size: getProportionateScreenWidth(32),
-                    ),
-                  ),
-                  IconButton(
-                    onPressed: () {
-                      if (index == 2 || starting) return false;
-                      setState(() {
-                        if (reason.length != 0 && index == 0 ||
-                            (index == 1 &&
-                                !(pricePerCigaratte == null ||
-                                    dailycigarattes == null ||
-                                    currency == null))) index += 1;
-                      });
-                    },
-                    icon: Icon(
-                      Icons.keyboard_arrow_right,
-                      size: getProportionateScreenWidth(32),
-                    ),
-                  ),
-                ],
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        child: SafeArea(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Container(
+                color: Colors.red,
+                child: router(context, index),
               ),
-            ),
-            SizedBox(
-              height: 30,
-            ),
-          ],
+              Column(
+                children: [
+                  _pageIndicators,
+                  _pageNavigation,
+                ],
+              ),
+            ],
+          ),
         ),
       ),
+    );
+  }
+
+  Widget get _pageIndicators => Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              buildpageindicator(0),
+              SizedBox(
+                width: 5,
+              ),
+              buildpageindicator(1),
+              SizedBox(
+                width: 5,
+              ),
+              buildpageindicator(2),
+            ],
+          )
+        ],
+      );
+
+  Widget get _pageNavigation => Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            _isFirstPage
+                ? SizedBox()
+                : _makeNavigationButton(
+                    icon: _leftArrowIcon,
+                    action: _moveToPrevious,
+                  ),
+            _isLastPage
+                ? SizedBox()
+                : _makeNavigationButton(
+                    icon: _rightArrowIcon,
+                    action: _moveToNextPage,
+                    isEnabled: _canMoveToNextScreen(),
+                  ),
+          ],
+        ),
+      );
+
+  _moveToPrevious() {
+    if (index == 0 || starting) return false;
+    setState(() {
+      index -= 1;
+    });
+  }
+
+  _moveToNextPage() {
+    if (index == 2 || starting) return false;
+    setState(() {
+      if (reason.length != 0 && index == 0 ||
+          (index == 1 &&
+              !(pricePerCigaratte == null ||
+                  dailycigarattes == null ||
+                  currency == null))) index += 1;
+    });
+  }
+
+  bool get _isFirstPage => index == 0;
+  bool get _isLastPage => index == 2;
+
+  bool _canMoveToNextScreen() {
+    if (_isLastPage) return false;
+
+    switch (index) {
+      case 0:
+        return reason.isNotEmpty;
+      case 1:
+        return _hasCompletedConsumptionFields();
+      default:
+        return true;
+    }
+  }
+
+  bool _hasCompletedConsumptionFields() {
+    if (pricePerCigaratte == null) return false;
+    if (dailycigarattes == null) return false;
+    if (currency == null) return false;
+    return true;
+  }
+
+  Icon get _rightArrowIcon => Icon(
+        Icons.keyboard_arrow_right,
+        size: getProportionateScreenWidth(32),
+      );
+
+  Icon get _leftArrowIcon => Icon(
+        Icons.keyboard_arrow_left,
+        size: getProportionateScreenWidth(32),
+      );
+
+  Widget _makeNavigationButton({
+    Icon icon,
+    VoidCallback action,
+    bool isEnabled = true,
+  }) {
+    return IconButton(
+      color: Colors.blue,
+      onPressed: isEnabled ? action : null,
+      icon: icon,
     );
   }
 
