@@ -345,39 +345,57 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   Widget get _pageNavigation => Padding(
         padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
         child: Row(
-          children: [
-            IconButton(
-              onPressed: () {
-                if (index == 0 || starting) return false;
-                setState(() {
-                  index -= 1;
-                });
-              },
-              icon: Icon(
-                Icons.keyboard_arrow_left,
-                size: getProportionateScreenWidth(32),
-              ),
-            ),
-            IconButton(
-              onPressed: () {
-                if (index == 2 || starting) return false;
-                setState(() {
-                  if (reason.length != 0 && index == 0 ||
-                      (index == 1 &&
-                          !(pricePerCigaratte == null ||
-                              dailycigarattes == null ||
-                              currency == null))) index += 1;
-                });
-              },
-              icon: Icon(
-                Icons.keyboard_arrow_right,
-                size: getProportionateScreenWidth(32),
-              ),
-            ),
-          ],
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            _makeNavigationButton(_leftArrowIcon, _moveToPrevious),
+            _makeNavigationButton(_rightArrowIcon, _moveToNextPage),
+          ],
         ),
       );
+
+  _moveToPrevious() {
+    if (index == 0 || starting) return false;
+    setState(() {
+      index -= 1;
+    });
+  }
+
+  _moveToNextPage() {
+    if (index == 2 || starting) return false;
+    setState(() {
+      if (reason.length != 0 && index == 0 ||
+          (index == 1 &&
+              !(pricePerCigaratte == null ||
+                  dailycigarattes == null ||
+                  currency == null))) index += 1;
+    });
+  }
+
+  Icon get _rightArrowIcon => Icon(
+        Icons.keyboard_arrow_right,
+        size: getProportionateScreenWidth(32),
+      );
+
+  Icon get _leftArrowIcon => Icon(
+        Icons.keyboard_arrow_left,
+        size: getProportionateScreenWidth(32),
+      );
+
+  Widget _makeNavigationButton(Icon icon, VoidCallback action) {
+    return IconButton(
+      onPressed: () {
+        if (index == 2 || starting) return false;
+        setState(() {
+          if (reason.length != 0 && index == 0 ||
+              (index == 1 &&
+                  !(pricePerCigaratte == null ||
+                      dailycigarattes == null ||
+                      currency == null))) index += 1;
+        });
+      },
+      icon: icon,
+    );
+  }
 
   AnimatedContainer buildpageindicator(int i) {
     return AnimatedContainer(
