@@ -4,13 +4,15 @@ import 'package:flutter/material.dart';
 import 'package:quitsmoke/comps/particle.dart';
 
 class ParticleSpawner with ChangeNotifier {
-  List<Particle> particles = [];
-  double initialX;
-  double initialY;
+  ParticleSpawner({required this.size});
+
   final Size size;
+  late double initialX;
+  late double initialY;
+  List<Particle> particles = [];
   double degree = 0;
   double sprayRadius = 70;
-  ParticleSpawner({this.size});
+
   createParticles(int count) {
     final random = Random();
     initialX = size.width / 2;
@@ -37,13 +39,14 @@ class ParticleSpawner with ChangeNotifier {
   }
 
   updateParticles() {
-    for (var particle in particles) {
-      particle.update();
-    }
-    particles.removeWhere((element) =>
-        (initialX - element.x).abs() > sprayRadius ||
-        (initialY - element.y).abs() > sprayRadius ||
-        (element.vX.abs() < 0.1 && element.vY.abs() < 0.1));
+    for (var particle in particles) particle.update();
+
+    particles.removeWhere(
+      (element) =>
+          (initialX - element.x).abs() > sprayRadius ||
+          (initialY - element.y).abs() > sprayRadius ||
+          (element.vX.abs() < 0.1 && element.vY.abs() < 0.1),
+    );
 
     notifyListeners();
   }
