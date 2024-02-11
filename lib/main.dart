@@ -2,8 +2,6 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:flutter_native_timezone/flutter_native_timezone.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import 'package:quitsmoke/notification_manager.dart';
@@ -31,8 +29,10 @@ void main() async {
 
 Future<void> _configureLocalTimeZone() async {
   tz.initializeTimeZones();
-  final String timeZoneName = await FlutterNativeTimezone.getLocalTimezone();
-  tz.setLocalLocation(tz.getLocation(timeZoneName));
+
+  final locations = tz.timeZoneDatabase.locations;
+  final timeZoneName = tz.getLocation(locations.keys.first);
+  tz.setLocalLocation(tz.getLocation(timeZoneName.name));
 }
 
 class MyApp extends StatelessWidget {
@@ -46,14 +46,14 @@ class MyApp extends StatelessWidget {
 
         if (!currentFocus.hasPrimaryFocus &&
             currentFocus.focusedChild != null) {
-          FocusManager.instance.primaryFocus.unfocus();
+          FocusManager.instance.primaryFocus?.unfocus();
         }
       },
       child: MaterialApp(
         builder: (context, child) {
           return MediaQuery(
             data: MediaQuery.of(context).copyWith(textScaleFactor: 1),
-            child: child,
+            child: child!,
           );
         },
         debugShowCheckedModeBanner: false,

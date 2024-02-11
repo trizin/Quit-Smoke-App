@@ -1,9 +1,7 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:avatar_glow/avatar_glow.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:quitsmoke/comps/getlang.dart';
 import 'package:quitsmoke/comps/snappable.dart';
@@ -15,7 +13,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'home_screen.dart';
 
 class WelcomeScreen extends StatefulWidget {
-  WelcomeScreen({Key key}) : super(key: key);
+  WelcomeScreen({Key? key}) : super(key: key);
 
   @override
   _WelcomeScreenState createState() => _WelcomeScreenState();
@@ -23,15 +21,15 @@ class WelcomeScreen extends StatefulWidget {
 
 class _WelcomeScreenState extends State<WelcomeScreen> {
   List<String> reason = [];
-  String currentReason;
+  late String currentReason;
   String lang = "";
   final myController = TextEditingController();
   final myController2 = TextEditingController();
   final myController3 = TextEditingController();
-  double pricePerCigaratte;
-  int dailycigarattes;
+  double? pricePerCigaratte;
+  int? dailycigarattes;
   int index = 0;
-  String currency;
+  String? currency;
   final snapKey = GlobalKey<SnappableState>();
 
   @override
@@ -42,23 +40,23 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   }
 
   bool starting = false;
+
   _startNow() async {
     if (pricePerCigaratte == null ||
         dailycigarattes == null ||
-        reason == null ||
         reason.length == 0 ||
         currency == null) return false;
     setState(() {
       starting = true;
     });
-    snapKey.currentState.snap();
+    snapKey.currentState?.snap();
 
     SharedPreferences pref = await SharedPreferences.getInstance();
     Future.delayed(Duration(seconds: 5), () {
-      pref.setString("startTime", stopDate.toIso8601String());
-      pref.setDouble("pricePerCigaratte", pricePerCigaratte);
-      pref.setInt("dailycigarattes", dailycigarattes);
-      pref.setString("currency", currency);
+      pref.setString("startTime", stopDate!.toIso8601String());
+      pref.setDouble("pricePerCigaratte", pricePerCigaratte!);
+      pref.setInt("dailycigarattes", dailycigarattes!);
+      pref.setString("currency", currency!);
       pref.setString("reason", jsonEncode(reason));
 
       Navigator.of(context).pushReplacement(
@@ -75,13 +73,13 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
           child: Column(
             children: [
               Text(langs[lang]["welcome"]["welcometext"],
-                  style: Theme.of(context).textTheme.headline4,
+                  style: Theme.of(context).textTheme.headlineSmall,
                   textAlign: TextAlign.center,
                   textScaleFactor: 1),
               SizedBox(height: getProportionateScreenHeight(50)),
               Text(
                 langs[lang]["welcome"]["tellreason"],
-                style: Theme.of(context).textTheme.headline4.copyWith(
+                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                     fontSize: getProportionateScreenWidth(22),
                     color: Colors.black.withAlpha(150)),
                 textAlign: TextAlign.center,
@@ -101,8 +99,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                 children: [
                   TextButton(
                       onPressed: () {
-                        if (currentReason.trim() == "") return false;
-                        if (reason.contains(currentReason.trim())) return false;
+                        if (currentReason.trim() == "") return;
+                        if (reason.contains(currentReason.trim())) return;
                         reason.add(currentReason.trim());
                         currentReason = "";
                         myController.clear();
@@ -146,8 +144,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                 langs[lang]["welcome"]["weneedtoknow"],
                 style: Theme.of(context)
                     .textTheme
-                    .headline4
-                    .copyWith(fontSize: getProportionateScreenWidth(32)),
+                    .headlineSmall
+                    ?.copyWith(fontSize: getProportionateScreenWidth(32)),
                 textAlign: TextAlign.center,
               ),
               SizedBox(
@@ -196,8 +194,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                     langs[lang]["welcome"]["choosecurrency"],
                     style: Theme.of(context)
                         .textTheme
-                        .bodyText2
-                        .copyWith(fontSize: getProportionateScreenWidth(26)),
+                        .headlineSmall
+                        ?.copyWith(fontSize: getProportionateScreenWidth(26)),
                   ),
                   items: currencyList.map((Map value) {
                     return DropdownMenuItem<String>(
@@ -221,7 +219,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                     children: [
                       Text("${langs[lang]["settings"]["youstopped"]}"),
                       Text(
-                        "${DateFormat.yMMMMEEEEd().format(stopDate)}\n${DateFormat.Hms().format(stopDate)}",
+                        "${DateFormat.yMMMMEEEEd().format(stopDate!)}\n${DateFormat.Hms().format(stopDate!)}",
                         textAlign: TextAlign.center,
                       ),
                     ],
@@ -229,11 +227,14 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                   SizedBox(
                     width: 10,
                   ),
-                  Padding(padding: EdgeInsets.symmetric(horizontal: 20), child:
-                    OutlinedButton(
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 20),
+                    child: OutlinedButton(
                       onPressed: () => _pickDate(context),
                       child: Text(langs[lang]["settings"]["change"]),
-                      style: OutlinedButton.styleFrom(side: BorderSide(color: Theme.of(context).primaryColor, width: 2)),
+                      style: OutlinedButton.styleFrom(
+                          side: BorderSide(
+                              color: Theme.of(context).primaryColor, width: 2)),
                     ),
                   ),
                 ],
@@ -255,11 +256,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
               if (!starting)
                 AvatarGlow(
                   glowColor: Colors.blue,
-                  endRadius: 180.0,
                   duration: Duration(milliseconds: 2000),
                   repeat: true,
-                  showTwoGlows: false,
-                  repeatPauseDuration: Duration(milliseconds: 100),
                   child: ElevatedButton(
                     child: Text(langs[lang]["welcome"]["start"]),
                     onPressed: () => _startNow(),
@@ -272,22 +270,22 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     return Container();
   }
 
-  DateTime stopDate;
+  DateTime? stopDate;
 
   _pickDate(BuildContext context) async {
-    DateTime date = await showDatePicker(
+    DateTime? date = await showDatePicker(
       context: context,
       firstDate: DateTime(DateTime.now().year - 5),
       lastDate: DateTime.now(),
-      initialDate: stopDate,
+      initialDate: stopDate ?? DateTime.now(),
     );
 
-    TimeOfDay t =
+    TimeOfDay? t =
         await showTimePicker(context: context, initialTime: TimeOfDay.now());
     if (date != null && t != null)
       setState(() {
         stopDate = date;
-        stopDate = stopDate.add(Duration(hours: t.hour, minutes: t.minute));
+        stopDate = stopDate?.add(Duration(hours: t.hour, minutes: t.minute));
       });
     print(stopDate);
   }
@@ -332,7 +330,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                 children: [
                   IconButton(
                     onPressed: () {
-                      if (index == 0 || starting) return false;
+                      if (index == 0 || starting) return;
                       setState(() {
                         index -= 1;
                       });
@@ -344,7 +342,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                   ),
                   IconButton(
                     onPressed: () {
-                      if (index == 2 || starting) return false;
+                      if (index == 2 || starting) return;
                       setState(() {
                         if (reason.length != 0 && index == 0 ||
                             (index == 1 &&
