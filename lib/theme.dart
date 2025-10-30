@@ -8,23 +8,22 @@ ThemeData themeData(BuildContext context) {
   return ThemeData(
     appBarTheme: appBarTheme,
     primaryColor: kPrimaryColor,
-    accentColor: kAccentLightColor,
+    hintColor: kAccentLightColor,
     scaffoldBackgroundColor: Colors.white,
     colorScheme: ColorScheme.light(
       secondary: kSecondaryLightColor,
       // on light theme surface = Colors.white by default
     ),
-    backgroundColor: Colors.white,
+    primaryColorLight: Colors.white,
     iconTheme: IconThemeData(color: kBodyTextColorLight),
-    accentIconTheme: IconThemeData(color: kAccentIconLightColor),
     primaryIconTheme: IconThemeData(color: kPrimaryIconLightColor),
     textTheme: GoogleFonts.quicksandTextTheme().copyWith(
-      bodyText1: GoogleFonts.quicksand().copyWith(color: kBodyTextColorLight),
-      bodyText2: GoogleFonts.quicksand()
+      bodyLarge: GoogleFonts.quicksand().copyWith(color: kBodyTextColorLight),
+      bodyMedium: GoogleFonts.quicksand()
           .copyWith(color: kBodyTextColorLight, fontWeight: FontWeight.bold),
-      headline4: GoogleFonts.quicksand()
+      headlineMedium: GoogleFonts.quicksand()
           .copyWith(color: kTitleTextLightColor, fontSize: 32),
-      headline1: GoogleFonts.quicksand()
+      displayLarge: GoogleFonts.quicksand()
           .copyWith(color: kTitleTextLightColor, fontSize: 80),
     ),
   );
@@ -34,22 +33,21 @@ ThemeData themeData(BuildContext context) {
 ThemeData darkThemeData(BuildContext context) {
   return ThemeData.dark().copyWith(
     primaryColor: kPrimaryColor,
-    accentColor: kAccentDarkColor,
+    hintColor: kAccentDarkColor,
     scaffoldBackgroundColor: Color(0xFF0D0C0E),
     appBarTheme: appBarTheme,
     colorScheme: ColorScheme.light(
       secondary: kSecondaryDarkColor,
       surface: kSurfaceDarkColor,
     ),
-    backgroundColor: kBackgroundDarkColor,
+    primaryColorLight: kBackgroundDarkColor,
     iconTheme: IconThemeData(color: kBodyTextColorDark),
-    accentIconTheme: IconThemeData(color: kAccentIconDarkColor),
     primaryIconTheme: IconThemeData(color: kPrimaryIconDarkColor),
     textTheme: GoogleFonts.latoTextTheme().copyWith(
-      bodyText1: TextStyle(color: kBodyTextColorDark),
-      bodyText2: TextStyle(color: kBodyTextColorDark),
-      headline4: TextStyle(color: kTitleTextDarkColor, fontSize: 32),
-      headline1: TextStyle(color: kTitleTextDarkColor, fontSize: 80),
+      bodyLarge: TextStyle(color: kBodyTextColorDark),
+      bodyMedium: TextStyle(color: kBodyTextColorDark),
+      headlineMedium: TextStyle(color: kTitleTextDarkColor, fontSize: 32),
+      displayLarge: TextStyle(color: kTitleTextDarkColor, fontSize: 80),
     ),
   );
 }

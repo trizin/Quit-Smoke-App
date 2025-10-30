@@ -12,7 +12,8 @@ import 'package:quitsmoke/static/lang.dart';
 import '../size_config.dart';
 
 class GuideScreen extends StatefulWidget {
-  GuideScreen({Key key, this.cigaratteManager}) : super(key: key);
+  GuideScreen({Key? key, required this.cigaratteManager})
+      : super(key: key);
   final Cigaratte cigaratteManager;
 
   @override
@@ -103,7 +104,7 @@ class _GuideScreenState extends State<GuideScreen> {
                     ),
                     Text(
                       langs[lang]["guideps"]["guides"],
-                      style: Theme.of(context).textTheme.bodyText2.copyWith(
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           fontSize: getProportionateScreenWidth(22),
                           color: Colors.black),
                     ),
@@ -160,7 +161,7 @@ class _GuideScreenState extends State<GuideScreen> {
                     left: getProportionateScreenWidth(140),
                     child: Text(
                       langs[lang]["guideps"]["guideto"],
-                      style: Theme.of(context).textTheme.headline3.copyWith(
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
                           color: Colors.white,
                           fontSize: getProportionateScreenWidth(32)),
                     ),
@@ -210,7 +211,7 @@ class _GuideScreenState extends State<GuideScreen> {
           ),
           Text(
             "${langs[lang]["home"]["guide"]}",
-            style: Theme.of(context).textTheme.bodyText2.copyWith(
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 color: Colors.white, fontSize: getProportionateScreenWidth(26)),
           )
         ],
@@ -242,8 +243,14 @@ class PreventCard extends StatelessWidget {
   final String title;
   final String text;
   final String id;
-  const PreventCard({Key key, this.image, this.title, this.text, this.id})
-      : super(key: key);
+
+  const PreventCard({
+    Key? key,
+    required this.image,
+    required this.title,
+    required this.text,
+    required this.id,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -293,7 +300,7 @@ class PreventCard extends StatelessWidget {
                     children: <Widget>[
                       Text(
                         title,
-                        style: Theme.of(context).textTheme.bodyText2.copyWith(
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                             fontSize: getProportionateScreenWidth(16),
                             color: Colors.black),
                       ),

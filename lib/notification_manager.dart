@@ -1,5 +1,4 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
@@ -11,7 +10,8 @@ const CHANNEL_DESC = "Reminders";
 class NotificationManager {
   static sendNotification({title, body}) async {
     const AndroidNotificationDetails androidPlatformChannelSpecifics =
-        AndroidNotificationDetails(CHANNEL_ID, CHANNEL_NAME, CHANNEL_DESC,
+        AndroidNotificationDetails(CHANNEL_ID, CHANNEL_NAME,
+            channelDescription: CHANNEL_DESC,
             importance: Importance.max,
             priority: Priority.high,
             showWhen: false);
@@ -27,12 +27,17 @@ class NotificationManager {
 
   static periodicallyShow({title, body}) async {
     const AndroidNotificationDetails androidPlatformChannelSpecifics =
-        AndroidNotificationDetails(CHANNEL_ID, CHANNEL_NAME, CHANNEL_DESC);
+        AndroidNotificationDetails(CHANNEL_ID, CHANNEL_NAME,
+            channelDescription: CHANNEL_DESC);
     const NotificationDetails platformChannelSpecifics =
         NotificationDetails(android: androidPlatformChannelSpecifics);
     await flutterLocalNotificationsPlugin.periodicallyShow(
-        0, title, body, RepeatInterval.daily, platformChannelSpecifics,
-        androidAllowWhileIdle: true);
+      0,
+      title,
+      body,
+      RepeatInterval.daily,
+      platformChannelSpecifics,
+    );
   }
 
   static dailyNotification({title, body}) async {
@@ -52,10 +57,9 @@ class NotificationManager {
         'weekly scheduled notification body',
         _nextInstanceOfTenAM(),
         const NotificationDetails(
-          android: AndroidNotificationDetails(
-              CHANNEL_ID, CHANNEL_NAME, CHANNEL_DESC),
+          android: AndroidNotificationDetails(CHANNEL_ID, CHANNEL_NAME,
+              channelDescription: CHANNEL_DESC),
         ),
-        androidAllowWhileIdle: true,
         uiLocalNotificationDateInterpretation:
             UILocalNotificationDateInterpretation.absoluteTime,
         matchDateTimeComponents: DateTimeComponents.dayOfWeekAndTime);
@@ -67,16 +71,16 @@ class NotificationManager {
 
   static scheduleNotification({title, body}) async {
     await flutterLocalNotificationsPlugin.zonedSchedule(
-        0,
-        title,
-        body,
-        tz.TZDateTime.now(tz.local).add(const Duration(seconds: 20)),
-        const NotificationDetails(
-            android: AndroidNotificationDetails(
-                CHANNEL_ID, CHANNEL_NAME, CHANNEL_DESC)),
-        androidAllowWhileIdle: true,
-        uiLocalNotificationDateInterpretation:
-            UILocalNotificationDateInterpretation.absoluteTime);
+      0,
+      title,
+      body,
+      tz.TZDateTime.now(tz.local).add(const Duration(seconds: 20)),
+      const NotificationDetails(
+          android: AndroidNotificationDetails(CHANNEL_ID, CHANNEL_NAME,
+              channelDescription: CHANNEL_DESC)),
+      uiLocalNotificationDateInterpretation:
+          UILocalNotificationDateInterpretation.absoluteTime,
+    );
 
     print("Scheduled");
   }
@@ -87,14 +91,14 @@ class NotificationManager {
 
     /// Note: permissions aren't requested here just to demonstrate that can be
     /// done later
-    final IOSInitializationSettings initializationSettingsIOS =
-        IOSInitializationSettings(
+    final DarwinInitializationSettings initializationSettingsIOS =
+        DarwinInitializationSettings(
       requestAlertPermission: false,
       requestBadgePermission: false,
       requestSoundPermission: false,
     );
-    const MacOSInitializationSettings initializationSettingsMacOS =
-        MacOSInitializationSettings(
+    const DarwinInitializationSettings initializationSettingsMacOS =
+        DarwinInitializationSettings(
             requestAlertPermission: false,
             requestBadgePermission: false,
             requestSoundPermission: false);
@@ -104,13 +108,11 @@ class NotificationManager {
             iOS: initializationSettingsIOS,
             macOS: initializationSettingsMacOS);
     await flutterLocalNotificationsPlugin.initialize(initializationSettings,
-        onSelectNotification: (String payload) async {
-      if (payload != null) {
-        print('notification payload: $payload');
-      }
+        onDidReceiveNotificationResponse: (payload) async {
+      print('notification payload: $payload');
     });
 
-    final bool result = await flutterLocalNotificationsPlugin
+    final bool? result = await flutterLocalNotificationsPlugin
         .resolvePlatformSpecificImplementation<
             IOSFlutterLocalNotificationsPlugin>()
         ?.requestPermissions(

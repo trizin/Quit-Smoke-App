@@ -26,10 +26,10 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  Cigaratte cigaraManager;
-  String lang = "";
-  String currency = "";
-  String tiptext = "";
+  late Cigaratte cigaraManager;
+  String? lang = "";
+  String? currency = "";
+  String? tiptext = "";
 
   Future<void> loadData() async {
     SharedPreferences pref = await SharedPreferences.getInstance();
@@ -37,12 +37,13 @@ class _HomeScreenState extends State<HomeScreen> {
     currency = pref.getString("currency");
 
     cigaraManager = Cigaratte(
-        dailyCigarattes: pref.getInt("dailycigarattes"),
-        pricePerCigaratte: pref.getDouble("pricePerCigaratte"),
-        startDate: DateTime.parse(pref.getString("startTime")));
+        dailyCigarattes: pref.getInt("dailycigarattes") ?? 0,
+        pricePerCigaratte: pref.getDouble("pricePerCigaratte") ?? 0.0,
+        startDate: DateTime.parse(pref.getString("startTime") ?? ''));
   }
 
   int lastRndInt = -1;
+
   @override
   void initState() {
     loadData();
@@ -76,7 +77,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   showAlertDialog(BuildContext context) {
-    Widget cancelButton = FlatButton(
+    Widget cancelButton = ElevatedButton(
       child: Text(
         "${langs[lang]["home"]["cancel"]}",
       ),
@@ -84,29 +85,29 @@ class _HomeScreenState extends State<HomeScreen> {
         Navigator.of(context).pop();
       },
     );
-    Widget helpButton = FlatButton(
+    Widget helpButton = ElevatedButton(
       child: Text(
         "${langs[lang]["guide"]["ifyouslip"]["title"]}",
       ),
       onPressed: () {
         Navigator.of(context).pop();
         Navigator.push(context, MaterialPageRoute(builder: (_) {
-          return GuideViewScreen(id: "ifyouslip", lang: lang);
+          return GuideViewScreen(id: "ifyouslip", lang: lang ?? '');
         }));
       },
     );
-    Widget helpButton2 = FlatButton(
+    Widget helpButton2 = ElevatedButton(
       child: Text(
         "${langs[lang]["guide"]["managecravings"]["title"]}",
       ),
       onPressed: () {
         Navigator.of(context).pop();
         Navigator.push(context, MaterialPageRoute(builder: (_) {
-          return GuideViewScreen(id: "managecravings", lang: lang);
+          return GuideViewScreen(id: "managecravings", lang: lang ?? '');
         }));
       },
     );
-    Widget continueButton = FlatButton(
+    Widget continueButton = ElevatedButton(
       child: Text(
         "${langs[lang]["home"]["reset"]}",
         style: TextStyle(color: Colors.red),
@@ -144,7 +145,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    if (cigaraManager == null) return Text("");
     Size sc = MediaQuery.of(context).size;
     SizeConfig().init(context);
     return Scaffold(
@@ -206,7 +206,7 @@ class _HomeScreenState extends State<HomeScreen> {
               opacity: tipOpacity,
               child: FittedBox(
                 child: Text(
-                  tiptext,
+                  tiptext ?? '',
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: getProportionateScreenWidth(14)),
                 ),
@@ -309,15 +309,15 @@ class _HomeScreenState extends State<HomeScreen> {
             textAlign: TextAlign.center,
             style: Theme.of(context)
                 .textTheme
-                .bodyText2
-                .copyWith(fontSize: getProportionateScreenWidth(18)),
+                .bodyMedium
+                ?.copyWith(fontSize: getProportionateScreenWidth(18)),
           ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: AutoSizeText(
               "${langs[lang]["progressDescription"][cigaraManager.upcomingEvent["id"]]}",
               textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.bodyText1,
+              style: Theme.of(context).textTheme.bodyLarge,
               maxLines: 2,
             ),
           ),
@@ -401,7 +401,11 @@ class _HomeScreenState extends State<HomeScreen> {
     return "";
   }
 
-  Column buildDayItem({int count, bool checked, bool current}) {
+  Column buildDayItem({
+    required int count,
+    required bool checked,
+    required bool current,
+  }) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -418,7 +422,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   )
                 : Icon(
                     Icons.adjust,
-                    color: Theme.of(context).backgroundColor,
+                    color: Theme.of(context).colorScheme.background,
                   ),
         SizedBox(
           height: 4,
@@ -459,9 +463,9 @@ class _HomeScreenState extends State<HomeScreen> {
           decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10),
               border: Border.all(
-                color: Theme.of(context).primaryIconTheme.color,
+                color: Theme.of(context).colorScheme.onSurface,
               ),
-              color: Theme.of(context).backgroundColor,
+              color: Theme.of(context).colorScheme.background,
               boxShadow: [
                 BoxShadow(
                     color: kShadowColor.withOpacity(.32),
@@ -479,7 +483,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     width: getProportionateScreenWidth(150),
                     child: AutoSizeText(
                       title,
-                      style: Theme.of(context).textTheme.bodyText2.copyWith(
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           fontSize: getProportionateScreenWidth(16),
                           color: color),
                       maxLines: 2,
@@ -494,7 +498,7 @@ class _HomeScreenState extends State<HomeScreen> {
               SizedBox(height: 5),
               AutoSizeText(
                 text,
-                style: Theme.of(context).textTheme.bodyText2.copyWith(
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     fontWeight: FontWeight.bold,
                     fontSize: getProportionateScreenWidth(14)),
                 maxLines: 2,
@@ -506,8 +510,15 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  InkWell buildCategoryCard(Size sc, BuildContext context,
-      {Color color, IconData icon, String text, String id, Function onTap}) {
+  InkWell buildCategoryCard(
+    Size sc,
+    BuildContext context, {
+    Color? color,
+    IconData? icon,
+    required String text,
+    required String id,
+    Function()? onTap,
+  }) {
     return InkWell(
       onTap: onTap,
       child: Ink(
@@ -515,10 +526,10 @@ class _HomeScreenState extends State<HomeScreen> {
             horizontal: 10, vertical: getProportionateScreenHeight(15)),
         decoration: BoxDecoration(
             border: Border.all(
-              color: Theme.of(context).primaryIconTheme.color,
+              color: Theme.of(context).colorScheme.primary,
             ),
             borderRadius: BorderRadius.circular(12),
-            color: Theme.of(context).backgroundColor,
+            color: Theme.of(context).colorScheme.background,
             boxShadow: [
               BoxShadow(
                   color: Colors.white,
@@ -546,7 +557,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               AutoSizeText(
                 text,
-                style: Theme.of(context).textTheme.headline4.copyWith(
+                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                     color: color,
                     fontSize: getProportionateScreenWidth(20),
                     fontWeight: FontWeight.w600),

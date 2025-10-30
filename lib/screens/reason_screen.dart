@@ -7,16 +7,16 @@ import 'package:quitsmoke/comps/getlang.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ReasonScreen extends StatefulWidget {
-  ReasonScreen({Key key}) : super(key: key);
+  ReasonScreen({Key? key}) : super(key: key);
 
   @override
   _ReasonScreenState createState() => _ReasonScreenState();
 }
 
 class _ReasonScreenState extends State<ReasonScreen> {
-  String lang;
+  late String lang;
 
-  List<String> reasons;
+  late List<String>? reasons;
 
   void initState() {
     loadReasons();
@@ -26,7 +26,7 @@ class _ReasonScreenState extends State<ReasonScreen> {
 
   void loadReasons() async {
     SharedPreferences pref = await SharedPreferences.getInstance();
-    String _reasons = pref.getString("reason");
+    String _reasons = pref.getString("reason") ?? 'unknown';
     if (!_reasons.startsWith("[")) {
       reasons = [_reasons];
       pref.setString("reason", jsonEncode(reasons));
@@ -64,7 +64,7 @@ class _ReasonScreenState extends State<ReasonScreen> {
           ),
           Text(
             "${langs[lang]["home"]["reason"]}",
-            style: Theme.of(context).textTheme.bodyText2.copyWith(
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 color: Colors.white, fontSize: getProportionateScreenWidth(26)),
           )
         ],
@@ -94,7 +94,7 @@ class _ReasonScreenState extends State<ReasonScreen> {
               child: Center(
                 child: Text("${langs[lang]["reason"]["somegoodreasons"]}",
                     textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.headline4.copyWith(
+                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                         color: Colors.white.withAlpha(200),
                         fontWeight: FontWeight.w300,
                         fontSize: getProportionateScreenWidth(36))),
@@ -107,7 +107,7 @@ class _ReasonScreenState extends State<ReasonScreen> {
                   itemBuilder: (BuildContext context, int index) {
                     return renderListElement(index, context);
                   },
-                  itemCount: reasons.length,
+                  itemCount: reasons!.length,
                   separatorBuilder: (BuildContext context, int index) =>
                       const Divider(),
                 ),
@@ -119,11 +119,12 @@ class _ReasonScreenState extends State<ReasonScreen> {
   }
 
   String newReason = "";
+
   FloatingActionButton floatingButton(BuildContext context) {
     return FloatingActionButton(
       onPressed: () {
         if (!_sheetopen)
-          scaffoldState.currentState.showBottomSheet((context) => Container(
+          scaffoldState.currentState!.showBottomSheet((context) => Container(
                 padding: EdgeInsets.all(15),
                 color: Colors.white,
                 height: getProportionateScreenHeight(250),
@@ -133,8 +134,8 @@ class _ReasonScreenState extends State<ReasonScreen> {
                     "${langs[lang]["reason"]["addnew"]}",
                     style: Theme.of(context)
                         .textTheme
-                        .headline4
-                        .copyWith(fontSize: getProportionateScreenWidth(22)),
+                        .headlineSmall
+                        ?.copyWith(fontSize: getProportionateScreenWidth(22)),
                   ),
                   Divider(),
                   TextField(
@@ -145,8 +146,8 @@ class _ReasonScreenState extends State<ReasonScreen> {
                         hintText: "${langs[lang]["reason"]["reason"]}"),
                     style: Theme.of(context)
                         .textTheme
-                        .headline4
-                        .copyWith(fontSize: getProportionateScreenWidth(22)),
+                        .headlineSmall
+                        ?.copyWith(fontSize: getProportionateScreenWidth(22)),
                   ),
                   ElevatedButton(
                     style: TextButton.styleFrom(
@@ -155,7 +156,7 @@ class _ReasonScreenState extends State<ReasonScreen> {
                     child: Text("${langs[lang]["wallet"]["add"]}"),
                     onPressed: () {
                       _sheetopen = false;
-                      reasons.add(newReason);
+                      reasons?.add(newReason);
                       newReason = "";
                       saveReasons();
                       setState(() {});
@@ -174,9 +175,9 @@ class _ReasonScreenState extends State<ReasonScreen> {
 
   Widget renderListElement(int index, BuildContext context) {
     return Dismissible(
-      key: Key(reasons[index]),
+      key: Key(reasons![index]),
       onDismissed: (direction) {
-        reasons.removeAt(index);
+        reasons?.removeAt(index);
         saveReasons();
       },
       confirmDismiss: (DismissDirection direction) async {
@@ -220,7 +221,7 @@ class _ReasonScreenState extends State<ReasonScreen> {
             boxShadow: [
               BoxShadow(
                   blurRadius: 10,
-                  color: Colors.deepPurple[600],
+                  color: Colors.deepPurple[600]!,
                   spreadRadius: 2,
                   offset: Offset(3, 2))
             ],
@@ -229,8 +230,8 @@ class _ReasonScreenState extends State<ReasonScreen> {
         child: Row(
           children: [
             Flexible(
-              child: Text("${reasons[index]}",
-                  style: Theme.of(context).textTheme.headline4.copyWith(
+              child: Text("${reasons![index]}",
+                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                       color: Colors.white.withAlpha(200),
                       fontWeight: FontWeight.w300,
                       fontSize: getProportionateScreenWidth(21))),
